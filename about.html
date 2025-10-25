@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>About - visualOsint</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --green: #1f9f3b;
+    --white: #fff;
+  }
+
+body {
+    font-family: "Inter", sans-serif;
+    background: #fff;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;   
+    justify-content: center; 
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center; 
+}
+
+
+h1 {
+    font-size: 48px;
+    font-weight: 900; 
+    margin-bottom: 30px;
+    text-align: center; 
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeIn 1s ease forwards;
+}
+
+
+  .visual { color: #000; }
+  .osint {
+    background: linear-gradient(90deg, #1f9f3b, #34d06d, #1f9f3b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientFlow 3s infinite linear;
+    background-size: 200%;
+  }
+
+  @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+  @keyframes gradientFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .content {
+    max-width: 700px;
+    font-size: 16px;
+    color: #222;
+    line-height: 1.6;
+    text-align: left;
+    margin-bottom: 50px;
+  }
+
+  a { color: var(--green); text-decoration: none; font-weight: 600; }
+  a:hover { text-decoration: underline; }
+
+  .back-btn {
+    background: var(--green);
+    color: var(--white);
+    border: none;
+    border-radius: 25px;
+    padding: 10px 25px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(31,159,59,0.4);
+    transition: all 0.3s ease;
+    margin-bottom: 30px;
+  }
+  .back-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(31,159,59,0.6);
+  }
+
+  .footer-owner {
+    font-size: 16px;
+    color: #777;
+    opacity: 0.7;
+    position: fixed;
+    right: 20px;
+    bottom: 15px;
+  }
+</style>
+</head>
+<body>
+
+<h1><span class="visual">visual</span><span class="osint">Osint</span></h1>
+
+<button class="back-btn" onclick="window.location.href='/index.html'">Back</button>
+
+<div class="content">
+  <p>visualOsint is an open-source project built as a lightweight tool for searching through local data files like <code>.txt</code>, <code>.csv</code>, <code>.log</code>, and <code>.json</code> — perfect for OSINT (Open Source Intelligence) work.</p>
+
+  <p>The goal is to provide a simple interface that lets you quickly scan your local data, highlight matches visually, and keep user access secure. The app runs on Flask in the backend, with plain HTML/CSS/JavaScript for the interface.</p>
+
+  <p>You can check out the project and all updates on GitHub: <a href="https://github.com/archpurist" target="_blank">https://github.com/archpurist</a></p>
+
+  <p>visualOsint is actively developed, so feel free to fork it, tweak it, and make your own versions. It’s designed for researchers, analysts, and curious minds who like to dig into data and see what’s really there.</p>
+</div>
+
+<div class="footer-owner">Owner archpurist</div>
+
+</body>
+</html>

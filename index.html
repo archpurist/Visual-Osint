@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>visualOsint</title>
+<style>
+  :root {
+    --green: #1f9f3b;
+    --white: #fff;
+  }
+
+  body {
+    font-family: "Inter", sans-serif;
+    background: #ffffff;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+  }
+
+  h1 {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 40px;
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeIn 1s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .visual { color: #000; }
+  .osint {
+    background: linear-gradient(90deg, #1f9f3b, #34d06d, #1f9f3b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientFlow 3s infinite linear;
+    background-size: 200%;
+  }
+
+  @keyframes gradientFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.95);
+    border-radius: 50px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    padding: 10px 15px;
+    width: 420px;
+    transition: transform 0.2s ease;
+  }
+
+  input[type="text"] {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    padding: 10px;
+    background: transparent;
+  }
+
+  input::placeholder { color: #aaa; }
+
+  .search-btn {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.25s ease;
+  }
+
+  .search-btn:hover {
+    box-shadow: 0 0 12px rgba(31, 159, 59, 0.6);
+    transform: scale(1.05);
+  }
+
+  .search-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--white);
+  }
+
+  .loader {
+    position: absolute;
+    display: flex;
+    gap: 5px;
+    opacity: 0;
+  }
+
+  .loader div {
+    width: 6px;
+    height: 6px;
+    background: var(--white);
+    border-radius: 50%;
+    animation: bounce 0.8s infinite ease-in-out;
+  }
+
+  .loader div:nth-child(2) { animation-delay: 0.2s; }
+  .loader div:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+  }
+
+  .search-btn.loading svg { opacity: 0; }
+  .search-btn.loading .loader { opacity: 1; }
+
+  #results {
+    margin-top: 40px;
+    max-width: 650px;
+    width: 90%;
+    text-align: left;
+    font-size: 15px;
+    color: #222;
+    line-height: 1.5;
+    overflow-y: auto;
+    max-height: 60vh;
+  }
+
+  .file-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f9f3b;
+    margin-top: 30px;
+    margin-bottom: 10px;
+  }
+
+  .result-box {
+    background: rgba(255,255,255,0.9);
+    padding: 10px 16px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 8px;
+    word-break: break-word;
+  }
+
+  .match-email {
+    background: linear-gradient(90deg, #1f9f3b, #34d06d, #1f9f3b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-decoration: underline;
+    text-decoration-color: #34d06d;
+    font-weight: bold;
+  }
+
+  .logout-btn {
+    position: fixed;
+    top: 20px;
+    right: 25px;
+    background: var(--green);
+    color: var(--white);
+    border: none;
+    border-radius: 25px;
+    padding: 8px 20px;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(31, 159, 59, 0.4);
+    transition: all 0.3s ease;
+  }
+
+  .logout-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(31,159,59,0.6);
+  }
+
+  .about-btn {
+    position: fixed;
+    top: 20px;
+    right: 150px;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 8px 20px;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(31,159,59,0.4);
+    transition: all 0.3s ease;
+  }
+  .about-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(31,159,59,0.6);
+  }
+
+  .footer-owner {
+    position: fixed;
+    right: 20px;
+    bottom: 15px;
+    font-size: 16px;
+    color: #777;
+    opacity: 0.7;
+  }
+</style>
+</head>
+<body>
+
+<button class="logout-btn" id="logoutBtn">Logout</button>
+
+<button class="about-btn" onclick="window.location.href='/about.html'">About</button>
+
+<h1><span class="visual">visual</span><span class="osint">Osint</span></h1>
+
+<div class="search-box">
+  <input type="text" id="email" placeholder="here enter email or IP" />
+  <button class="search-btn" id="search">
+    <svg fill="none" viewBox="0 0 24 24" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round"
+            d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"/>
+    </svg>
+    <div class="loader"><div></div><div></div><div></div></div>
+  </button>
+</div>
+
+<div id="results"></div>
+<div class="footer-owner">Owner archpurist</div>
+
+<script>
+  const btn = document.getElementById("search");
+  const input = document.getElementById("email");
+  const resultsDiv = document.getElementById("results");
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  function validFormat(str) {
+    const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+    const ipRegex = /^(?:\d{1,3}\.){3}\d{1,3}$/;
+    return emailRegex.test(str) || ipRegex.test(str);
+  }
+
+  async function performSearch(query) {
+    btn.classList.add("loading");
+    resultsDiv.innerHTML = "";
+
+    try {
+      const res = await fetch("/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: query })
+      });
+
+      if (res.status === 401) {
+        window.location.href = "/login.html";
+        return;
+      }
+
+      const data = await res.json();
+      btn.classList.remove("loading");
+
+      if (!data.results || data.results.length === 0) {
+        resultsDiv.innerHTML = "<div>No matches found.</div>";
+        return;
+      }
+
+      resultsDiv.innerHTML = data.results.map(group => {
+        const fileTitle = `<div class='file-title'>${group.file}</div>`;
+        const matches = group.matches.map(line => {
+          const safe = line.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+          const highlighted = safe.replace(new RegExp(query, "ig"), m => `<span class='match-email'>${m}</span>`);
+          return `<div class='result-box'>${highlighted}</div>`;
+        }).join("");
+        return fileTitle + matches;
+      }).join("");
+
+    } catch (e) {
+      btn.classList.remove("loading");
+      resultsDiv.innerHTML = "<div>Search failed. Try again.</div>";
+    }
+  }
+
+  btn.addEventListener("click", () => {
+    const val = input.value.trim();
+    if (!validFormat(val)) {
+      resultsDiv.innerHTML = "<div style='color:#c62828;margin-top:10px;'>Valid format required – enter email or IP address.</div>";
+      return;
+    }
+    performSearch(val);
+  });
+
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+      const val = input.value.trim();
+      if (!validFormat(val)) {
+        resultsDiv.innerHTML = "<div style='color:#c62828;margin-top:10px;'>Valid format required – enter email or IP address.</div>";
+        return;
+      }
+      performSearch(val);
+    }
+  });
+
+  logoutBtn.addEventListener("click", async () => {
+    try {
+      await fetch("/logout");
+      window.location.href = "/login.html";
+    } catch (e) {
+      console.error("Logout failed", e);
+    }
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Log In - visualOsint</title>
+<style>
+  :root {
+    --green: #1f9f3b;
+    --white: #fff;
+  }
+
+  body {
+    font-family: "Inter", sans-serif;
+    background: #fff;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 1s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(25px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  h1 {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 40px;
+    opacity: 0;
+    transform: translateY(25px);
+    animation: slideIn 1s ease forwards;
+  }
+
+  .visual { color: #000; }
+  .osint {
+    background: linear-gradient(90deg, #1f9f3b, #34d06d, #1f9f3b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientFlow 3s infinite linear;
+    background-size: 200%;
+  }
+
+  @keyframes slideIn { to { opacity: 1; transform: translateY(0); } }
+  @keyframes gradientFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .login-container {
+    background: rgba(255,255,255,0.97);
+    padding: 40px 50px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  label {
+    font-size: 15px;
+    color: #333;
+    margin-top: 10px;
+    margin-bottom: 6px;
+    align-self: flex-start;
+  }
+
+  input {
+    width: 260px;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 15px;
+    margin-bottom: 14px;
+    transition: all 0.25s ease;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 6px rgba(31,159,59,0.3);
+  }
+
+  button {
+    background: var(--green);
+    color: var(--white);
+    border: none;
+    border-radius: 25px;
+    padding: 12px 28px;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  button:hover {
+    box-shadow: 0 0 15px rgba(31,159,59,0.4);
+    transform: scale(1.05);
+  }
+
+  .error {
+    color: #c62828;
+    margin-top: 15px;
+    font-size: 14px;
+    height: 20px;
+  }
+</style>
+</head>
+<body>
+
+<h1><span class="visual">visual</span><span class="osint">Osint</span></h1>
+
+<div class="login-container">
+  <label for="user">Login</label>
+  <input type="text" id="user" placeholder="Enter your login" />
+  <label for="pass">Password</label>
+  <input type="password" id="pass" placeholder="Enter password" />
+  <button id="loginBtn">Log In</button>
+  <div class="error" id="error"></div>
+</div>
+
+<div id="results"></div>
+<div class="footer-owner">Owner archpurist</div>
+
+<script>
+  const btn = document.getElementById('loginBtn');
+  const err = document.getElementById('error');
+
+  btn.addEventListener('click', async () => {
+    const user = document.getElementById('user').value.trim();
+    const pass = document.getElementById('pass').value.trim();
+
+    if (!user || !pass) {
+      err.textContent = 'Please fill in both fields';
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: user, password: pass })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        window.location.href = '/index.html';
+      } else {
+        err.textContent = data.error || 'Invalid credentials';
+      }
+    } catch (e) {
+      err.textContent = 'Server error, try again later';
+    }
+  });
+</script>
+</body>
+</html>
